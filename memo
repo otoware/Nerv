@@ -1,0 +1,700 @@
+#coding:utf-8
+import random
+import collections
+#from statistics import mode
+
+
+#【プレイヤー人数】を決める
+def ninzugime():
+    while True:
+        ninzu = input('【プレイヤー総数】を入力してください：')
+        try:
+            ninzu=int(ninzu)
+        except ValueError:
+            print("数字を入れろ")
+            continue
+        if ninzu<=4:
+            print("5以上入れろ")
+            continue
+        if ninzu > 20:
+            print("プレイヤーは20人までや")
+            continue
+        print('～【プレイヤー総数】は'+str(ninzu)+"人です～")
+        ninzu = int(ninzu)
+        break
+    return ninzu
+
+#【理事陣営】の人数を入力し、【学生陣営】の人数が求まる
+def rijisumninzu(x):
+    while True:
+        rijisum = input('【理事陣営】の総数を入力してください：')
+        try:
+            rijisum=int(rijisum)
+        except ValueError:
+            print("数字を入れろ")
+            continue
+        if rijisum >= x/2 and rijisum > 0:
+            print("【理事陣営】多すぎや")
+            continue
+        elif rijisum < 1:
+            print("【理事陣営】は最低でも1人入れろ")
+            continue
+        gakuseisum = x - rijisum
+        print('～【理事陣営】は'+str(rijisum)+"人で、【学生陣営】は"+str(gakuseisum)+"人です～")
+        break
+    return gakuseisum,rijisum
+
+#寮生の人数を決める
+def ryoninzu(gakuseisum):
+    while True:
+        ryo = input('寮生の数を入力してください：')
+        try:
+            ryo=int(ryo)
+        except ValueError:
+            print("数字を入れろ")
+            continue
+        if ryo > gakuseisum:
+            print("寮生多すぎや")
+            continue
+        elif ryo < 0:
+            print("0以上を入れろ")
+            continue
+        print('～寮生は'+str(ryo)+"人です～")
+        break
+    return ryo
+
+#卒業生の人数を決める
+def sotsuninzu(ryo):
+    while True:
+        sotsu = input('卒業生の数を入力してください：')
+        try:
+            sotsu = int(sotsu)
+        except ValueError:
+            print("数字を入れろ")
+            continue
+        if ryo + sotsu > gakuseisum:
+            print("卒業生多すぎや")
+            continue
+        elif sotsu < 0:
+            print("0以上を入れろ")
+            continue
+        print('～卒業生は'+str(sotsu)+"人です～")
+        sotsu = int(sotsu)
+        break
+    return sotsu
+
+#折田先生の人数を決める
+def oritaninzu(sotsu):
+    while True:
+        orita = input('折田先生の数を入力してください：')
+        try:
+            orita = int(orita)
+        except ValueError:
+            print("数字を入れろ")
+            continue
+        if ryo + sotsu + orita > gakuseisum:
+            print("折田先生多すぎや")
+            continue
+        elif orita < 0:
+            print("0以上を入れろ")
+            continue
+        print('～折田先生は'+str(orita)+"人です～")
+        break
+    return orita
+
+#立て看描きの人数を決める
+def tatekanninzu(tatekan):
+    while True:
+        tatekan = input('立て看描きの数を入力してください：')
+        try:
+            tatekan = int(tatekan)
+        except ValueError:
+            print("数字を入れろ")
+            continue
+        if ryo + sotsu + orita + tatekan > gakuseisum:
+            print("立て看描き多すぎや")
+            continue
+        elif tatekan < 0:
+            print("0以上を入れろ")
+            continue
+        print('～立て看描きは'+str(tatekan)+"人です～")
+        break
+    return tatekan
+
+#優等生の人数を決める
+def yutoninzu(tatekan):
+    while True:
+        yuto = input('優等生の数を入力してください：')
+        try:
+            yuto = int(yuto)
+        except ValueError:
+            print("数字を入れろ")
+            continue
+        if ryo + sotsu + orita + tatekan + yuto > gakuseisum:
+            print("優等生多すぎや")
+            continue
+        elif yuto < 0:
+            print("0以上を入れろ")
+            continue
+        print('～優等生は'+str(yuto)+"人です～")
+        yuto = int(yuto)
+        break
+    return yuto
+
+#学生陣営の残りは全員学生になる
+def gakuseininzu(yuto):
+    gakusei = gakuseisum - ryo - sotsu - orita - tatekan - yuto
+    return gakusei
+
+
+
+#職員の人数を決める
+def shokuninzu(rijisum):
+    while True:
+        shoku = input('職員の数を入力してください：')
+        try:
+            shoku = int(shoku)
+        except ValueError:
+            print("数字を入れろ")
+            continue
+        if shoku > rijisum:
+            print("職員多すぎや")
+            continue
+        elif shoku < 0:
+            print("0以上を入れろ")
+            continue
+        print('～職員は'+str(shoku)+"人です～")
+        break
+    return shoku
+
+#総長の人数を決める
+def sochoninzu(shoku):
+    while True:
+        socho = input('総長の数を入力してください：')
+        try:
+            socho = int(socho)
+        except ValueError:
+            print("数字を入れろ")
+            continue
+        if socho > 1:
+            print("総長は1人までや")
+            continue
+        elif socho + shoku > rijisum:
+            print("他の理事陣営が多すぎた")
+            continue
+        elif socho < 0:
+            print("0以上を入れろ")
+            continue
+        print('～総長は'+str(socho)+"人です～")
+        break
+    return socho
+
+#理事陣営の残りは全員理事になる
+def rijininzu(socho):
+    riji = rijisum - shoku - socho
+    return riji
+
+#役職一覧を表示
+def ichiran():
+    print()
+    print("配役が決まりました")
+    print("【学生陣営】 "+str(gakuseisum)+"人")
+    if gakusei > 0:
+        print("学生　　　："+str(gakusei)+"人")
+    if ryo > 0:
+        print("寮生　　　："+str(ryo)+"人")
+    if sotsu > 0:
+        print("卒業生　　："+str(sotsu)+"人")
+    if orita > 0:
+        print("折田先生　："+str(orita)+"人")
+    if tatekan > 0:
+        print("立て看描き："+str(tatekan)+"人")
+    if yuto > 0:
+        print("優等生　　："+str(yuto)+"人")
+    print("【理事陣営】 "+str(rijisum)+"人")
+    if riji > 0:
+        print("理事　　　："+str(riji)+"人")
+    if shoku > 0:
+        print("職員　　　："+str(shoku)+"人")
+    if socho > 0:
+        print("総長　　　："+str(socho)+"人")
+    print()
+
+#プレイヤーコンストラクタ列挙関数
+#本当はdef playerconstruct()にまとめたい
+
+
+#プレイヤークラス
+class Player:
+    def __init__(self,number):
+        self.number = number
+        self.inochi = 1 #1は生存、2は追放、3は処分
+        self.yaku = None
+        self.mamori = False
+
+#入力した役職の通りにリストを作る
+def yakugime(players,job_list):
+    random.shuffle(job_list)
+    if len(players) is not len(job_list):
+        raise ValueError("人数と役の数が違う")
+    for k,job in enumerate(job_list): #リストの中身と何番目かを出してくれる
+        players[k].yaku=job
+    return players
+
+#仮に、プレイヤー別役職一覧表示
+def kettei():
+    for i in range(len(players)):
+        print("プレイヤー"+str(i+1)+"は"+str(players[i].yaku)+"です")
+
+def create_one_job_list(name,num):
+    #create_one_job_list("寮生",3)→["寮生""寮生","寮生"]
+    return[name for k in range(num)]
+
+def shonichi_hantei():
+    print("【"+str(days)+"日目　告示】")
+    print("告示が出ました")
+    print("今回の処分者は……")
+    print("学生が1人処分されました")
+
+#初日の夜の行動
+def shonichi_yoru():
+    global days
+    print("【"+str(days)+"日目　夜の行動】")
+    for i in range(len(players)):
+        while True:
+            henji=input("あなたはプレイヤー"+str(i+1)+"ですか？（はいなら1、いいえなら2）")
+            try:
+                henji=int(henji)
+            except ValueError:
+                print("数字の1か2を入れろ")
+                continue
+            if henji != 1:
+                if henji == 2:
+                    print("誰やねん")
+                    continue
+                if henji != 2:
+                    print("1か2を入れろ")
+                    continue
+            break
+        if players[i].yaku=="理事":
+            print("あなたは【理事】です")
+            print("初日の処分は自動でプレイヤー外の学生を処分します")
+        if players[i].yaku=="職員":
+            print("あなたは【職員】です")
+            print("初日の処分は自動でプレイヤー外の学生を処分します")
+        if players[i].yaku=="総長":
+            print("あなたは【総長】です")
+            print("初日の処分は自動でプレイヤー外の学生を処分します")
+        if players[i].yaku=="学生":
+            print("あなたは【学生】です")
+            print("やることがありません。明日は集会で理事を探しましょう")
+        if players[i].yaku=="寮生":
+            print("あなたは【寮生】です")
+            print("初日の対話は自動で非理事と対話を行います")
+            shonichi_taiwa(i)
+        if players[i].yaku=="卒業生":
+            print("あなたは【卒業生】です")
+            print("翌日以降に追放されたプレイヤーの役職を確認します")
+        if players[i].yaku=="折田先生":
+            print("あなたは【折田先生】です")
+            print("翌日以降に1人を選び、理事の処分から守ってください")
+        if players[i].yaku=="立て看描き":
+            print("あなたは【立て看描き】です")
+            print("やることがありません。立て看を描いて翌朝立てましょう")
+        if players[i].yaku=="優等生":
+            print("あなたは【優等生】です")
+            print("やることがありません。理事の言うことをしっかり聞きましょう")
+
+
+def hiru():
+    global days
+    days = days + 1
+    print("【"+str(days)+"日目　集会開始】")
+
+    for i in range(len(players)):
+        if players[i].yaku == "立て看描き":
+            if players[i].inochi == 1:
+                print("立て看が設置されました")
+                for j in range(len(players)):
+                    if players[j].yaku == "職員":
+                        if players[j].inochi == 1:
+                            print("立て看が撤去されました")
+            elif players[i].inochi != 1:
+                print("立て看は設置されませんでした")
+
+    print("昼になりました。誰を大学から追放するか話し合ってください")
+    while True:
+        owari = input('集会が終わったら1を押してください')
+        try:
+            owari=int(owari)
+        except ValueError:
+            print("数字を入れろ")
+            continue
+        if owari != 1:
+            print("1を入れろ")
+            continue
+        print("【"+str(days)+"日目　集会終了】")
+        break
+
+#投票
+def vote():
+    gakunai_list=[]
+    tsuihou_list=[]
+    for i in range(len(players)):
+        if players[i].inochi == 1:
+            gakunai_list.append("プレイヤー"+str(i+1))
+    for i in range(len(players)):
+        while True:
+            henji=input("あなたはプレイヤー"+str(i+1)+"ですか？（はいなら1、いいえなら2）")
+            try:
+                henji=int(henji)
+            except ValueError:
+                print("数字の1か2を入れろ")
+                continue
+            if henji != 1:
+                if henji == 2:
+                    print("誰やねん")
+                    continue
+                if henji != 2:
+                    print("1か2を入れろ")
+                    continue
+            break
+        #死亡確認
+        if players[i].inochi != 1:
+            print("あなたは学外の部外者なので行動できません")
+        elif players[i].inochi == 1:
+            #投票
+            print("現在、学内にいるのは以下のプレイヤーです")
+            print(gakunai_list)
+            while True:
+                vote=input("追放したいプレイヤー番号を入力してください")
+                try:
+                    vote=int(vote)
+                except ValueError:
+                    print("数字の1か2を入れろ")
+                    continue
+                if vote<1 or vote>ninzu:
+                    print("そんなプレイヤーいない")
+                    continue
+                if players[vote-1].inochi != 1:
+                    print("学内のプレイヤーから選べ")
+                    continue
+                if vote == i + 1:
+                    print("自分は選べない")
+                    continue
+                break
+            tsuihou_list.append(vote)
+    counted = collections.Counter(tsuihou_list)
+    #最頻値が同値である場合全て出力したい　よく分からんけど最頻値複数選べてる
+    mode=[counted.most_common()[0][0]]
+    x = random.choice(mode)
+    print("本日の追放者はプレイヤー"+str(x)+"さんに決まりました")
+    print("これ以降プレイヤー"+str(x)+"さんは大学への入構が禁止されます")
+    players[x-1].inochi = 2
+
+def yoru():
+    global days
+    global shobun_list
+    shobun_list.clear()
+    for i in range(len(players)):
+        players[i].mamori=False
+    print("【"+str(days)+"日目　夜の行動】")
+    for i in range(len(players)):
+        while True:
+            henji=input("あなたはプレイヤー"+str(i+1)+"ですか？（はいなら1、いいえなら2）")
+            try:
+                henji=int(henji)
+            except ValueError:
+                print("数字の1か2を入れろ")
+                continue
+            if henji != 1:
+                if henji == 2:
+                    print("誰やねん")
+                    continue
+                if henji != 2:
+                    print("1か2を入れろ")
+                    continue
+            break
+
+        #死亡確認
+        if players[i].inochi != 1:
+            print("あなたは学外の部外者なので行動できません")
+        elif players[i].inochi == 1:
+            #役職の行動
+            if players[i].yaku=="理事":
+                print("あなたは【理事】です")
+                shobun()
+            if players[i].yaku=="職員":
+                print("あなたは【職員】です")
+                shobun()
+            if players[i].yaku=="総長":
+                print("あなたは【総長】です")
+                shobun()
+            if players[i].yaku=="学生":
+                print("あなたは【学生】です")
+                print("やることがありません。明日は集会で理事を探しましょう")
+            if players[i].yaku=="寮生":
+                print("あなたは【寮生】です")
+                taiwa(i)
+            if players[i].yaku=="卒業生":
+                print("あなたは【卒業生】です")
+                sotsutaiwa()
+            if players[i].yaku=="折田先生":
+                print("あなたは【折田先生】です")
+                mamori(i)
+            if players[i].yaku=="立て看描き":
+                print("あなたは【立て看描き】です")
+                print("やることがありません。立て看を描いて翌朝立てましょう")
+            if players[i].yaku=="優等生":
+                print("あなたは【優等生】です")
+                print("やることがありません。理事の言うことをしっかり聞きましょう")
+
+
+
+
+
+def shobun():
+    global shobun_list
+    while True:
+        erabi = input("処分したい学内者のプレイヤーナンバーを入力してください")
+        try:
+            erabi=int(erabi)
+        except ValueError:
+            print("数字だけを入れろ")
+            continue
+        if erabi<1:
+            print("プレイヤーは1からや")
+            continue
+        elif erabi>ninzu:
+            print("そんなプレイヤーはいない")
+            continue
+        if players[erabi-1].yaku=="理事":
+            print("学生から選べ")
+            continue
+        elif players[erabi-1].yaku=="職員":
+            print("学生から選べ")
+            continue
+        elif players[erabi-1].yaku=="総長":
+            print("学生から選べ")
+            continue
+        if players[erabi-1].inochi != 1:
+            print("学内の人しか処分できない")
+            continue
+        break
+    while True:
+        kikendo = input("その学内者の危険度を1-3で示せ")
+        try:
+            kikendo = int(kikendo)
+        except ValueError:
+            print("数字を入れろ")
+            continue
+        if kikendo < 1:
+            print("1-3で入れろ")
+            continue
+        elif kikendo > 3:
+            print("1-3で入れろ")
+            continue
+        break
+    for i in range(kikendo):
+        shobun_list.append(erabi)
+
+#初日の夜の寮生の対話
+def shonichi_taiwa(i):
+    shiro_list=[]
+    for j in range(len(players)):
+        if players[j].yaku != "理事"and players[j].yaku !="職員"and players[j].yaku !="総長": #なんで？？？
+            if i != j:
+                shiro_list.append(players[j])
+    a = random.choice(shiro_list)
+    print("対話しました")
+    print("プレイヤー"+str(a.number+1)+"は理事ではありませんでした")
+
+def taiwa(jibun):
+    while True:
+        taiwaaite = input("対話したい学内者のプレイヤーナンバーを入力してください")
+        try:
+            taiwaaite=int(taiwaaite)
+        except ValueError:
+            print("数字だけを入れろ")
+            continue
+        if taiwaaite == jibun + 1 :
+            print("自分とは対話できない")
+            continue
+        elif taiwaaite > ninzu:
+            print("そんなプレイヤーはいない")
+            continue
+        elif taiwaaite<1:
+            print("そんなプレイヤーはいない")
+            continue
+        if players[taiwaaite-1].inochi != 1:
+            print("学内の人としか対話できない")
+            continue
+        break
+    r=0
+    taiwakekka = players[taiwaaite-1].yaku
+    if taiwakekka=="理事":
+        r=1
+    if taiwakekka=="職員":
+        r=1
+    if taiwakekka=="総長":
+        r=1
+    if r==0:
+        print("対話しました")
+        print("プレイヤー"+str(taiwaaite)+"は理事ではありませんでした")
+    elif r == 1:
+        print("対話できませんでした")
+        print("プレイヤー"+str(taiwaaite)+"は理事でした")
+
+def sotsutaiwa():
+    for i in range(ninzu):
+        if players[i].inochi==1:
+            a=1
+        if players[i].inochi==3:
+            a=1
+        if players[i].inochi==2:
+            r=0
+            if players[i].yaku=="理事":
+                r=1
+            if players[i].yaku=="職員":
+                r=1
+            if players[i].yaku=="総長":
+                r=1
+            if r==0:
+                print("プレイヤー"+str(i+1)+"は理事ではありませんでした")
+            elif r == 1:
+                print("プレイヤー"+str(i+1)+"は理事でした")
+    print("現在追放されたプレイヤーは以上です")
+
+def mamori(jibun):
+    while True:
+        a = input("理事の処分からまもりたい人を選んでください")
+        try:
+            a=int(a)
+        except ValueError:
+            print("数字だけを入れろ")
+            continue
+        if a == jibun + 1 :
+            print("自分は守れない")
+            continue
+        elif a > ninzu:
+            print("そんなプレイヤーはいない")
+            continue
+        elif a < 1:
+            print("そんなプレイヤーはいない")
+            continue
+        if players[a-1].inochi != 1:
+            print("学内の人しか守れない")
+            continue
+        break
+    players[a-1].mamori = True
+
+
+
+def shobunkekka():
+    print("【"+str(days)+"日目　告示】")
+    print("告示が出ました")
+    print("今回の処分者は……")
+
+    if len(shobun_list) != 0:
+        counted = collections.Counter(shobun_list)
+        #最頻値が同値である場合全て出力したい　よく分からんけど最頻値複数選べてる
+        mode=[counted.most_common()[0][0]]
+        x = random.choice(mode)
+
+        if players[x-1].mamori == False:
+            print("プレイヤー"+str(x)+"さんです")
+            print("これ以降プレイヤー"+str(x)+"さんは大学への入構が禁止されます")
+            players[x-1].inochi = 3
+        elif players[x-1].mamori == True:
+            print("いませんでした。集会に参加しないよう呼びかけています")
+    elif len(shobun_list) == 0:
+        print("【実験用。本来はゲーム終了している】")
+
+#勝負判定
+def gameset():
+    global shiro_list
+    global kuro_list
+    global shuryo
+    shiro_list.clear()
+    kuro_list.clear()
+    for j in range(len(players)):
+        if players[j].yaku != "理事"and players[j].yaku !="職員"and players[j].yaku !="総長":
+            if players[j].inochi == 1:
+                shiro_list.append(players[j])
+        elif players[j].yaku == "理事"or players[j].yaku =="職員"or players[j].yaku =="総長":
+            if players[j].inochi == 1:
+                kuro_list.append(players[j])
+    if len(kuro_list)==0:
+        print("この瞬間、管理強化を行う理事がいなくなり、大学に自由が戻ってきました")
+        shuryo=True
+    if len(kuro_list) >= len(shiro_list):
+        print("この瞬間、理事と学生の数が同数になりました。大学の管理強化は完了しました")
+        shuryo=True
+
+if __name__ == '__main__':
+    ninzu = ninzugime()
+    gakuseisum,rijisum = rijisumninzu(ninzu)
+    #1 人数を取る
+    #2 人数分Insertする
+    job_list=[]
+
+    ryo = ryoninzu(gakuseisum)
+    job_list.extend(create_one_job_list("寮生",ryo))
+
+    sotsu = sotsuninzu(ryo)
+    job_list.extend(create_one_job_list("卒業生",sotsu))
+
+    orita = oritaninzu(sotsu)
+    job_list.extend(create_one_job_list("折田先生",orita))
+
+    tatekan = tatekanninzu(orita)
+    job_list.extend(create_one_job_list("立て看描き",tatekan))
+
+    yuto = yutoninzu(tatekan)
+    job_list.extend(create_one_job_list("優等生",yuto))
+
+    gakusei = gakuseininzu(yuto)
+    job_list.extend(create_one_job_list("学生",gakusei))
+
+    shoku = shokuninzu(rijisum)
+    job_list.extend(create_one_job_list("職員",shoku))
+
+    socho = sochoninzu(shoku)
+    job_list.extend(create_one_job_list("総長",socho))
+
+    riji = rijininzu(socho)
+    job_list.extend(create_one_job_list("理事",riji))
+
+    ichiran()
+
+    players = []
+    for i in range(ninzu):
+        players.append(Player(i))
+
+    yaku_players = yakugime(players,job_list)
+
+    #仮に、プレイヤー別役職一覧表示
+    kettei()
+
+
+    shobun_list=[]
+    shiro_list=[]
+    kuro_list=[]
+    shuryo=False
+    days=1
+
+    shonichi_yoru()
+    shonichi_hantei()
+
+    while True:
+        hiru()
+        vote()
+        gameset()
+        if shuryo == True:
+            break
+
+        yoru()
+        shobunkekka()
+        gameset()
+        if shuryo == True:
+            break

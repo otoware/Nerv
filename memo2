@@ -1,0 +1,3 @@
+<img id=opening src='opening.jpg' />
+
+var img = document.getElementById("opening");
